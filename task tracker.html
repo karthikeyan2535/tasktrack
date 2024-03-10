@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Neat background color */
+        }
+
+        #container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        input[type="text"],
+        button {
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .task-item {
+            margin-bottom: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: red;
+        }
+
+        .task-status {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1>Task Tracker</h1>
+        <input type="text" id="new-task" placeholder="Add Task">
+        <button id="add-task">Add Task</button>
+        <div id="incomplete-tasks">
+            <h2>Incomplete Tasks</h2>
+        </div>
+        <h2>Completed Tasks</h2>
+        <div id="completed-tasks"></div>
+    </div>
+
+    <script>
+        // Add a new task.
+        let taskInput = document.getElementById("new-task");
+
+        // Button to add a task
+        let addButton = document.getElementById("add-task");
+
+        // Incomplete tasks list
+        let incompleteTaskHolder = document.getElementById("incomplete-tasks");
+
+        // Completed tasks list
+        let completedTasksHolder = document.getElementById("completed-tasks");
+
+        // Function to create a new task item
+        let createNewTaskElement = function (taskString) {
+            let listItem = document.createElement("div");
+            listItem.className = "task-item";
+            listItem.innerHTML = `
+                <span>${taskString}</span>
+                <button class="delete-btn">X</button>
+            `;
+            return listItem;
+        }
+
+        // Function to add a task
+        let addTask = function () {
+            if (taskInput.value.trim() === "") {
+                alert("Please enter a task.");
+                return;
+            }
+            let listItem = createNewTaskElement(taskInput.value);
+            incompleteTaskHolder.appendChild(listItem);
+            bindTaskEvents(listItem);
+            taskInput.value = "";
+        }
+
+        // Function to delete a task
+        let deleteTask = function () {
+            let listItem = this.parentNode;
+            listItem.parentNode.removeChild(listItem);
+        }
+
+        // Function to move a task to completed tasks
+        let moveToCompletedTasks = function () {
+            let listItem = this.parentNode;
+            completedTasksHolder.appendChild(listItem);
+            bindTaskEvents(listItem);
+            listItem.querySelector('.delete-btn').remove(); // Remove delete button
+            let statusSpan = document.createElement('span');
+            statusSpan.className = 'task-status';
+            statusSpan.textContent = ' - Finished';
+            listItem.appendChild(statusSpan);
+        }
+
+        // Function to bind task events
+        let bindTaskEvents = function (taskListItem) {
+            let deleteButton = taskListItem.querySelector(".delete-btn");
+            deleteButton.onclick = deleteTask;
+            // Clicking on the task item moves it to completed tasks
+            taskListItem.onclick = moveToCompletedTasks;
+        }
+
+        // Add task button click event
+        addButton.addEventListener("click", addTask);
+
+        // Add sample tasks
+        let sampleTasks = ["Task 1", "Task 2", "Task 3"];
+        sampleTasks.forEach(task => {
+            let listItem = createNewTaskElement(task);
+            incompleteTaskHolder.appendChild(listItem);
+            bindTaskEvents(listItem);
+        });
+    </script>
+</body>
+
+</html>
